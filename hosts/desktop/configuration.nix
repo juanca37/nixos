@@ -19,6 +19,7 @@
       devices = ["nodev"];
       efiSupport = true;
       useOSProber = true;
+      default = 2;
   };
 };
   fonts.packages = with pkgs; [
