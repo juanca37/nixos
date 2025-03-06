@@ -22,9 +22,10 @@
       default = 2;
   };
 };
-  fonts.packages = with pkgs; [
-  nerdfonts 
+fonts.packages = with pkgs; [
+pkgs.nerd-fonts.droid-sans-mono
   ];
+
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -121,6 +122,8 @@
   obsidian
   docker
   nodejs
+  python313Packages.uv
+  python313
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
