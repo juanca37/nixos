@@ -124,6 +124,7 @@ pkgs.nerd-fonts.droid-sans-mono
   nodejs
   python313Packages.uv
   python313
+  awscli2
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
