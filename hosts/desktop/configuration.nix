@@ -118,6 +118,7 @@ pkgs.nerd-fonts.droid-sans-mono
   vscode
   git
   stow
+  aws-sam-cli
   eza
   obsidian
   docker
