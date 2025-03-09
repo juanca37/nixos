@@ -8,6 +8,12 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../../common/aws.nix
+      ../../common/terminal.nix
+      ../../common/dev/python.nix
+      ../../common/dev/javascript.nix
+      ../../common/docker.nix
+      ../../common/networking.nix
     ];
 
   # Bootloader.
@@ -25,16 +31,6 @@
 fonts.packages = with pkgs; [
 pkgs.nerd-fonts.droid-sans-mono
   ];
-
-  networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-  virtualisation.docker.enable = true;
-  # Enable networking
-  networking.networkmanager.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Madrid";
@@ -91,12 +87,11 @@ pkgs.nerd-fonts.droid-sans-mono
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
-  programs.zsh.enable = true;
+  
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.juan = {
     isNormalUser = true;
     description = "juan";
-    shell = pkgs.zsh;
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
     #  thunderbird
@@ -112,21 +107,10 @@ pkgs.nerd-fonts.droid-sans-mono
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  neovim
-  zsh
-  tmux
-  vscode
-  git
-  stow
-  aws-sam-cli
-  eza
-  obsidian
-  docker
-  nodejs
-  python313Packages.uv
-  python313
-  awscli2
-  ];
+    vscode
+    git
+    obsidian
+      ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -138,14 +122,7 @@ pkgs.nerd-fonts.droid-sans-mono
 
   # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
