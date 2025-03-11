@@ -10,7 +10,6 @@
   ];
 
   programs.zsh.enable = true;
-  users.users.juan = {
-    shell = pkgs.zsh;
-  };
+  users.users.juan.shell = pkgs.zsh;
+
 }

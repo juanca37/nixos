@@ -92,7 +92,7 @@ pkgs.nerd-fonts.droid-sans-mono
   users.users.juan = {
     isNormalUser = true;
     description = "juan";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ]; # Ensure all necessary groups are included
     packages = with pkgs; [
     #  thunderbird
     ];
