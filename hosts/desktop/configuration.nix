@@ -15,6 +15,7 @@
       ../../common/docker.nix
       ../../common/networking.nix
       ../../common/hyprland.nix
+      ../../common/bluetooth.nix
     ];
 
   # Bootloader.
