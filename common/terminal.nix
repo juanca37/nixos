@@ -2,6 +2,7 @@
 
 {
   environment.systemPackages = with pkgs; [
+    kitty
     neovim
     zsh
     tmux

@@ -14,6 +14,7 @@
       ../../common/dev/javascript.nix
       ../../common/docker.nix
       ../../common/networking.nix
+      ../../common/hyprland.nix
     ];
 
   # Bootloader.
@@ -28,9 +29,9 @@
       default = 2;
   };
 };
-fonts.packages = with pkgs; [
-pkgs.nerd-fonts.droid-sans-mono
-  ];
+  fonts.packages = with pkgs; [
+    pkgs.nerd-fonts.droid-sans-mono
+    ];
 
   # Set your time zone.
   time.timeZone = "Europe/Madrid";
@@ -49,22 +50,6 @@ pkgs.nerd-fonts.droid-sans-mono
     LC_TELEPHONE = "es_ES.UTF-8";
     LC_TIME = "es_ES.UTF-8";
   };
-
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "es";
-    variant = "";
-  };
-
-  # Configure console keymap
-  console.keyMap = "es";
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
