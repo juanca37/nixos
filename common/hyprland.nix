@@ -15,6 +15,7 @@
     waybar
     pavucontrol # Audio control
     networkmanagerapplet # Network tray
+    hyprshot
   ];
 
   # Required core services
