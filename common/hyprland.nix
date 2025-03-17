@@ -16,6 +16,7 @@
     pavucontrol # Audio control
     networkmanagerapplet # Network tray
     hyprshot
+    hyprlock
   ];
 
   # Required core services
