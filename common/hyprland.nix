@@ -17,6 +17,7 @@
     networkmanagerapplet # Network tray
     hyprshot
     hyprlock
+    hyprpaper
   ];
 
   # Required core services
