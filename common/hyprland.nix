@@ -27,4 +27,5 @@
   services.xserver.enable = true;
   services.xserver.displayManager.sddm.enable = true;
 
+  services.blueman.enable = true;
 }
