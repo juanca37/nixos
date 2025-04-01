@@ -16,6 +16,7 @@
       ../../common/networking.nix
       ../../common/hyprland.nix
       ../../common/bluetooth.nix
+      ../../common/code-cursor.nix
     ];
 
   # Bootloader.
