@@ -8,6 +8,9 @@
     tmux
     eza
     stow
+    unzip
+    ripgrep
+	gcc
   ];
 
   programs.zsh.enable = true;
