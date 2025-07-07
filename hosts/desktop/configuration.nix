@@ -100,6 +100,8 @@
     kdePackages.dolphin
       ];
 
+  # Solves issue with uv for Python?? https://nix.dev/guides/faq.html#how-to-run-non-nix-executables
+  programs.nix-ld.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
