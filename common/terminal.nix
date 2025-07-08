@@ -11,6 +11,7 @@
     unzip
     ripgrep
 	gcc
+	lazygit
   ];
 
   programs.zsh.enable = true;
