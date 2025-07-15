@@ -18,6 +18,8 @@
     hyprshot
     hyprlock
     hyprpaper
+	nwg-look
+	bibata-cursors
   ];
 
   # Required core services
