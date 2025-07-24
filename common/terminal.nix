@@ -12,6 +12,7 @@
     ripgrep
 	gcc
 	lazygit
+  wl-clipboard
   ];
 
   programs.zsh.enable = true;
