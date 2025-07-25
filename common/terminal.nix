@@ -13,6 +13,7 @@
 	gcc
 	lazygit
   wl-clipboard
+  jq
   ];
 
   programs.zsh.enable = true;
