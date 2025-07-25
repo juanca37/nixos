@@ -17,6 +17,7 @@
       ../../common/hyprland.nix
       ../../common/bluetooth.nix
       ../../common/code-cursor.nix
+      ../../common/spotify.nix
     ];
 
   # Bootloader.
