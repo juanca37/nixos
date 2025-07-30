@@ -18,6 +18,7 @@
       ../../common/bluetooth.nix
       ../../common/code-cursor.nix
       ../../common/spotify.nix
+      ../../common/browser.nix
     ];
 
   # Bootloader.
