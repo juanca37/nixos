@@ -4,7 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     # home-manager, used for managing user configuration
-
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
      darwin.url = "github:lnl7/nix-darwin";
      darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
@@ -16,7 +19,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-
   outputs = inputs@{ nixpkgs, home-manager, darwin, ... }: {
     darwinConfigurations = {
       # TODO please change the hostname to your own
@@ -31,6 +33,9 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+   	    home-manager.extraSpecialArgs ={	
+				inherit inputs;
+		};
 
             # TODO replace ryan with your own username
             home-manager.users."Juan.Carrasco-1" = import ./home.nix;
