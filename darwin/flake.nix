@@ -15,11 +15,13 @@
       # to avoid problems caused by different versions of nixpkgs.
       inputs.nixpkgs.follows = "nixpkgs";
     };
+firefox-addons = { url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons"; inputs.nixpkgs.follows = "nixpkgs"; };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, darwin, ... }: {
+  outputs = { self, nixpkgs, home-manager, darwin, ... } @inputs: let
+    inherit (self) outputs;
+    in {
     darwinConfigurations = {
-      # TODO please change the hostname to your own
       MBP-KFW2JYF66K = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
@@ -31,9 +33,9 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-
-            # TODO replace ryan with your own username
+	    home-manager.backupFileExtension = "backup";
             home-manager.users."Juan.Carrasco-1" = import ./home.nix;
+	    home-manager.extraSpecialArgs= {inherit inputs outputs;};
             # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
           }
         ];
