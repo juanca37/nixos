@@ -12,5 +12,5 @@
         name = "Juan.Carrasco-1";
         home = "/Users/Juan.Carrasco-1";
     };
-
+  nixpkgs.config.allowUnfree = true;
 }
