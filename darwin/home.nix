@@ -2,7 +2,7 @@
 {
   home.stateVersion = "23.05"; # Please read the comment before changing.
   programs.home-manager.enable = true;
-
+  imports = [./nvim.nix];
   ## Terminal config
   programs.kitty.enable = true;
   programs.kitty.settings = {
@@ -20,12 +20,14 @@ dynamic_background_opacity = true;
   programs.eza.enable = true;
 
   programs.lazygit.enable = true;
+
+
   ## Firefox cconfig
   programs.firefox.enable = true;
   programs.firefox.profiles.default.extensions.packages = with inputs.firefox-addons.packages.${pkgs.system}; [ darkreader bitwarden ublock-origin ];
  
-  ## ObsidiaB config
-  home.packages = [pkgs.obsidian];
+  ## Obsidian config
+  home.packages = [pkgs.obsidian ];
   home.activation.makeTrampolineApps = lib.hm.dag.entryAfter [ "writeBoundary" ] (
     builtins.readFile ./make-app-trampolines.sh
   );
