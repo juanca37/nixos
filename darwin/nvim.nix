@@ -12,5 +12,8 @@
 	source = /${config.home.homeDirectory}/Dotfiles/nvim;
 	recursive = true;
 };
-  home.packages = [pkgs.gcc pkgs.fzf ];
+  home.packages = [
+  pkgs.gcc
+  pkgs.fzf
+  pkgs.ripgrep];
   }
