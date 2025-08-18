@@ -27,7 +27,7 @@ dynamic_background_opacity = true;
   programs.firefox.profiles.default.extensions.packages = with inputs.firefox-addons.packages.${pkgs.system}; [ darkreader bitwarden ublock-origin ];
  
   ## Obsidian config
-  home.packages = [pkgs.obsidian ];
+  home.packages = [pkgs.obsidian pkgs.spotify ];
   # home.activation.makeTrampolineApps = lib.hm.dag.entryAfter [ "writeBoundary" ] (
   #   builtins.readFile ./make-app-trampolines.sh
   # );
