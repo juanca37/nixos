@@ -10,7 +10,7 @@
 		./firefox.nix
 		];
   ## Obsidian config
-  home.packages = [pkgs.obsidian pkgs.spotify pkgs.slack ];
+  home.packages = [pkgs.obsidian pkgs.spotify ];
   # home.activation.makeTrampolineApps = lib.hm.dag.entryAfter [ "writeBoundary" ] (
   #   builtins.readFile ./make-app-trampolines.sh
   # );

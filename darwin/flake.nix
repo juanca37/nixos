@@ -16,9 +16,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 firefox-addons = { url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons"; inputs.nixpkgs.follows = "nixpkgs"; };
+nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
   };
 
-  outputs = { self, nixpkgs, home-manager, darwin, ... } @inputs: let
+  outputs = { self, nixpkgs, home-manager, darwin, nix-homebrew, ... } @inputs: let
     inherit (self) outputs;
     in {
     darwinConfigurations = {
@@ -26,7 +27,15 @@ firefox-addons = { url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
         system = "aarch64-darwin";
         modules = [
           ./configuration.nix
-
+		  nix-homebrew.darwinModules.nix-homebrew
+		  {
+				nix-homebrew = {
+						enable = true;
+						enableRosetta = true;
+						autoMigrate = true;
+						user = "Juan.Carrasco-1";
+						};
+				}
           # make home-manager as a module of nixos
           # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
           home-manager.darwinModules.home-manager

@@ -13,4 +13,11 @@
         home = "/Users/Juan.Carrasco-1";
     };
   nixpkgs.config.allowUnfree = true;
+  system.primaryUser = "Juan.Carrasco-1";
+  homebrew = {
+		enable = true;
+		casks = [
+				"slack"
+				];
+				};
 }
