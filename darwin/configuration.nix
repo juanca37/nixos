@@ -27,11 +27,13 @@
 		NSGlobalDomain.AppleICUForce24HourTime = true;
 		NSGlobalDomain.AppleInterfaceStyle = "Dark";
 };
+						
   system.primaryUser = "Juan.Carrasco-1";
   homebrew = {
 		enable = true;
 		casks = [
 				"slack"
+				"doll"
 				];
 				};
 }
