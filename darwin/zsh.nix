@@ -8,6 +8,6 @@
   home.file.".zsh_prompt.conf".source = /${config.home.homeDirectory}/Dotfiles/zsh/.zsh_prompt.conf; 
 
   programs.eza.enable = true;
-
+  programs.bat.enable = true;
   programs.lazygit.enable = true;
 }
