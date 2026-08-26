@@ -3,6 +3,8 @@
 {
 	imports = [
 		./hardware.nix
+		../../modules/hardware/boot-splash.nix
+		../../modules/desktop/niri.nix
 	];
 
 	## BOOT
