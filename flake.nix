@@ -39,6 +39,18 @@
           specialArgs = { inherit inputs outputs; };
           modules = [ ./hosts/desktop ];
         };
+
+	zenbook-hexa = nixpkgs.lib.nixosSystem {
+		system = "x86_64-linux";
+		modules = [
+			./hosts/zenbook-hexa/default.nix
+			home-manager.nixosModules.home-manager {
+				home-manager.useGlobalPkgs = true;
+				home-manager.useUserPackages = true;
+			}
+			./modules/users/juan.nix
+			];
+		};
       };
       homeConfigurations = {
         "juan@desktop" = home-manager.lib.homeManagerConfiguration {
