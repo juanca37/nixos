@@ -1,0 +1,10 @@
+{ config,  pkgs, lib, ...}:
+{
+	home-manager.users.juan = { ... }: {
+		home.file.".config/niri/config.kdl".source = lib.mkOutOfStoreSymlink "/home/juan/Projects/Dotfiles/niri/config.kdl";
+		home.packages = with pkgs; [
+			kitty
+			firefox
+		];
+	};
+}

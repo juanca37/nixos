@@ -48,7 +48,8 @@
 				home-manager.useGlobalPkgs = true;
 				home-manager.useUserPackages = true;
 			}
-			./modules/users/juan.nix
+			./modules/users/juan/default.nix
+			./modules/users/juan/desktop.nix
 			];
 		};
       };
