@@ -17,9 +17,10 @@
     };
 firefox-addons = { url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons"; inputs.nixpkgs.follows = "nixpkgs"; };
 nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+	vscodeExtensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
-  outputs = { self, nixpkgs, home-manager, darwin, nix-homebrew, ... } @inputs: let
+  outputs = { self, nixpkgs, home-manager, darwin, nix-homebrew, vscodeExtensions,... } @inputs: let
     inherit (self) outputs;
     in {
     darwinConfigurations = {
@@ -44,7 +45,7 @@ nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
             home-manager.useUserPackages = true;
 	    home-manager.backupFileExtension = "backup";
             home-manager.users."Juan.Carrasco-1" = import ./home.nix;
-	    home-manager.extraSpecialArgs= {inherit inputs outputs;};
+	    home-manager.extraSpecialArgs= {inherit inputs outputs vscodeExtensions;};
             # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
           }
         ];

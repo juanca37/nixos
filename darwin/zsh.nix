@@ -6,6 +6,7 @@
   home.file.".zsh_alias.conf".source = /${config.home.homeDirectory}/Dotfiles/zsh/.zsh_alias.conf; 
   home.file.".zsh_commands.conf".source = /${config.home.homeDirectory}/Dotfiles/zsh/.zsh_commands.conf; 
   home.file.".zsh_prompt.conf".source = /${config.home.homeDirectory}/Dotfiles/zsh/.zsh_prompt.conf; 
+  home.file.".zsh_syngenta.conf".source = /${config.home.homeDirectory}/Dotfiles/zsh/.zsh_syngenta.conf; 
 
   programs.eza.enable = true;
   programs.bat.enable = true;

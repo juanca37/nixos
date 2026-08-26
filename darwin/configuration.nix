@@ -15,13 +15,18 @@
   nixpkgs.config.allowUnfree = true;
   system.defaults = {
 		dock = {
-				autohide = true;
+				autohide = false;
+				show-recents = false;
+				tilesize = 30;
+				orientation = "left";
+				show-process-indicators = false;
 				persistent-apps = [
+						"${pkgs.firefox}/Applications/firefox.app"
 						"${pkgs.kitty}/Applications/kitty.app"
 						"${pkgs.obsidian}/Applications/Obsidian.app"
 						"/Applications/Microsoft Outlook.app"
 						"/Applications/Slack.app"
-						"${pkgs.firefox}/Applications/firefox.app"
+						"/Applications/Microsoft Teams.app"
 						];
 		};
 		NSGlobalDomain.AppleICUForce24HourTime = true;
@@ -33,7 +38,9 @@
 		enable = true;
 		casks = [
 				"slack"
-				"doll"
 				];
-				};
+		brews = [
+				"nvm"
+				];
+		};
 }
