@@ -7,6 +7,7 @@
 			kitty
 			firefox
 			slack
+			zoom-us
 		];
 		programs.vscode = {
 			enable = true;
