@@ -10,6 +10,7 @@
 			tmux
 			zsh
 			btop
+			claude-code
 		];
 
 		programs.git = {
