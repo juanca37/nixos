@@ -5,6 +5,7 @@
 		./hardware.nix
 		../../modules/hardware/boot-splash.nix
 		../../modules/desktop/niri.nix
+		../../common/docker.nix
 	];
 
 	## BOOT
