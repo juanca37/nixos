@@ -39,9 +39,11 @@
 	};
 
 	## USER
+	programs.zsh.enable = true;
 	users.users.juan = {
 		isNormalUser = true;
 		description = "Juan";
+		shell = pkgs.zsh;
 		extraGroups = [
 			"networkmanager"
 			"wheel"
@@ -59,7 +61,7 @@
 
 	## NIX CONFIGURATION
 	nix.settings.experimental-features = [ "nix-command" "flakes" ];
-	
+
 	## SYSTEM CONFIGURATION
 	boot.kernelPackages = pkgs.linuxPackages_latest;
 	system.stateVersion = "24.11";
