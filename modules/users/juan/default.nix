@@ -11,7 +11,20 @@
 			zsh
 			btop
 			claude-code
+			awscli2
+			ssm-session-manager-plugin
+			redis
 		];
+
+		programs.gpg = {
+			enable = true;
+		};
+
+		services.gpg-agent = {
+			enable = true;
+			enableSshSupport = true;
+			pinentryPackage = pkgs.pinentry-gnome3; # Choose a pinentry flavor matching your desktop env
+		};
 
 		programs.git = {
 			enable = true;
