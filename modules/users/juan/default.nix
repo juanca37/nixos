@@ -14,6 +14,7 @@
 			awscli2
 			ssm-session-manager-plugin
 			redis
+			uv
 		];
 
 		programs.gpg = {
