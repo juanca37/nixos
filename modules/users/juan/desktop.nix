@@ -19,6 +19,7 @@
 			eza
 			bat
 			lazygit
+			gh
 			neovim
 			postman
 		];
