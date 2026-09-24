@@ -17,15 +17,11 @@
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
-    # Kept separate from the main `nixpkgs` pin so bumping fast-moving apps
-    # (like zoom-us) never drags the whole system (GNOME, mesa, kernel) along.
-    # Update just this input with: nix flake lock --update-input nixpkgs-latest
-    nixpkgs-latest.url = "github:nixos/nixpkgs/nixos-unstable";
 
     claude-code.url = "github:ryoppippi/nix-claude-code";
   };
 
-  outputs = { self, home-manager, nixpkgs, nixpkgs-latest, claude-code, ... }@inputs:
+  outputs = { self, home-manager, nixpkgs, claude-code, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -59,12 +55,6 @@
       {
         nixpkgs.overlays = [
           claude-code.overlays.default
-          (final: prev: {
-            zoom-us = (import nixpkgs-latest {
-              inherit (final) system;
-              config.allowUnfree = true;
-            }).zoom-us;
-          })
         ];
       }
 			];

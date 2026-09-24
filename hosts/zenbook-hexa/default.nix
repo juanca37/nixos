@@ -34,6 +34,7 @@
 	services.xserver.enable = true;
 	services.displayManager.gdm.enable = true;
 	services.xserver.desktopManager.gnome.enable = true;
+	services.flatpak.enable = true;
 	boot.initrd.kernelModules = [ "amdgpu" ];
 	services.xserver.videoDrivers = ["amdgpu"];
 	hardware.graphics = {

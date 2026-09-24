@@ -14,7 +14,6 @@
 			kitty
 			firefox
 			slack
-			zoom-us
 			fzf
 			zoxide
 			eza
