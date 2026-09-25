@@ -22,6 +22,7 @@
 			gh
 			neovim
 			postman
+			bruno
 			drawio
 			dbeaver-bin
 		];
