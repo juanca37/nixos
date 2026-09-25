@@ -22,6 +22,7 @@
 			gh
 			neovim
 			postman
+			drawio
 		];
 		programs.vscode = {
 			enable = true;
