@@ -23,6 +23,7 @@
 			neovim
 			postman
 			drawio
+			dbeaver-bin
 		];
 		programs.vscode = {
 			enable = true;
