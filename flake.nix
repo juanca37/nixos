@@ -19,9 +19,11 @@
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
 
     claude-code.url = "github:ryoppippi/nix-claude-code";
+
+    omp.url = "github:can1357/oh-my-pi";
   };
 
-  outputs = { self, home-manager, nixpkgs, claude-code, ... }@inputs:
+  outputs = { self, home-manager, nixpkgs, claude-code, omp, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -55,6 +57,9 @@
       {
         nixpkgs.overlays = [
           claude-code.overlays.default
+        ];
+        home-manager.sharedModules = [
+          omp.homeManagerModules.default
         ];
       }
 			];

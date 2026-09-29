@@ -32,5 +32,10 @@
 			userName = "juanca37";
 			userEmail = "juancarrascoalonso@hotmail.com";
 		};
+
+		programs.omp = {
+			enable = true;
+			settings.startup.quiet = true;
+		};
 	};
 }
