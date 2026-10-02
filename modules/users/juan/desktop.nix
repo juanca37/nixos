@@ -25,6 +25,7 @@
 			bruno
 			drawio
 			dbeaver-bin
+			zoom-us
 		];
 		programs.vscode = {
 			enable = true;
