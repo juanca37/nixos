@@ -41,6 +41,17 @@
 		enable = true;
 	};
 
+	## PRINTING
+	services.printing = {
+		enable = true;
+		drivers = [ pkgs.gutenprint pkgs.epson-escpr ];
+	};
+	services.avahi = {
+		enable = true;
+		nssmdns4 = true;
+		openFirewall = true;
+	};
+
 	## USER
 	programs.zsh.enable = true;
 	users.users.juan = {
@@ -51,6 +62,7 @@
 			"networkmanager"
 			"wheel"
 			"docker"
+			"lpadmin"
 		];
 	};
 
