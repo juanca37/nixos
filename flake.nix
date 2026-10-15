@@ -43,11 +43,6 @@
         forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
       overlays = import ./overlays { inherit inputs; };
       nixosConfigurations = {
-        desktop = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs outputs; };
-          modules = [ ./hosts/desktop ];
-        };
-
 	zenbook-hexa = nixpkgs.lib.nixosSystem {
 		system = "x86_64-linux";
 		modules = [
@@ -74,13 +69,6 @@
       }
 			];
 		};
-      };
-      homeConfigurations = {
-        "juan@desktop" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages."x86_64-linux";
-          extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./home/juan/desktop.nix ];
-        };
       };
     };
 }

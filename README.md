@@ -1,2 +1,2 @@
-For desktop installation
-> sudo nixos-rebuild switch --flake .#desktop --show-trace
+For zenbook-hexa installation
+> sudo nixos-rebuild switch --flake .#zenbook-hexa --show-trace
