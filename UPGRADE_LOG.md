@@ -16,7 +16,7 @@ No borrar generaciones ni hacer GC durante el proceso. Excepción acordada el 20
 
 Gens 1–44 (incluidas 40/41 y las fallidas 13/16/30/42/43) borradas a petición tras el paso 2. Su journal sigue disponible (`journalctl --list-boots`).
 
-Menú de arranque: tras la limpieza seguían apareciendo 34 entradas antiguas `nixos-<hash64>.conf` (formato de nombre de otro builder de systemd-boot, probablemente el de las gens unstable/26.05); el builder de 25.11 solo poda `nixos-generation-N.conf`. Se borran a mano (ver "Audio y menú").
+Menú de arranque: tras la limpieza seguían apareciendo 34 entradas antiguas `nixos-<hash64>.conf` (formato de nombre de otro builder de systemd-boot, probablemente el de las gens unstable/26.05); el builder de 25.11 solo poda `nixos-generation-N.conf`. Se borran a mano: `sudo find /boot/loader/entries -regextype posix-extended -regex '.*/nixos-[0-9a-f]{64}\.conf' -delete`. Revisar el menú otra vez tras el paso 4 (cambia el builder).
 
 ## Paso 0 — Diagnóstico (2026-11-14)
 
