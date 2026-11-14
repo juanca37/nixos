@@ -20,7 +20,15 @@
 
 
 	## LOCALIZATION AND KEYBOARD
-	time.timeZone = "Europe/Madrid";
+	time.timeZone = null; # Managed at runtime by automatic-timezoned / timedatectl / UI
+	services.automatic-timezoned.enable = true;
+	# GNOME disables the geoclue demo agent, which drops it from the whitelist, but
+	# automatic-timezoned runs that agent. Unlisted, geoclue never answers and the service dies.
+	services.geoclue2.whitelistedAgents = [
+		"gnome-shell"
+		"io.elementary.desktop.agent-geoclue2"
+		"geoclue-demo-agent"
+	];
 	i18n.defaultLocale = "es_ES.UTF-8";
 	i18n.extraLocaleSettings.LC_MESSAGES = "en_US.UTF-8"; # Keeps system errors in English
 	services.xserver.xkb = {
