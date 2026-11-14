@@ -4,7 +4,6 @@
 	imports = [
 		./hardware.nix
 		../../modules/hardware/boot-splash.nix
-		../../modules/desktop/niri.nix
 		../../common/docker.nix
 	];
 
@@ -41,10 +40,15 @@
 	## GRAPHICAL 
 	services.xserver.enable = true;
 	services.displayManager.gdm.enable = true;
-	services.xserver.desktopManager.gnome.enable = true;
+	services.desktopManager.gnome.enable = true;
 	services.flatpak.enable = true;
 	boot.initrd.kernelModules = [ "amdgpu" ];
 	services.xserver.videoDrivers = ["amdgpu"];
+	environment.sessionVariables = {
+		# Native Wayland for Firefox and Electron/Chromium apps
+		MOZ_ENABLE_WAYLAND = "1";
+		NIXOS_OZONE_WL = "1";
+	};
 	hardware.graphics = {
 		enable = true;
 	};
@@ -84,8 +88,24 @@
 
 	## NIX CONFIGURATION
 	nix.settings.experimental-features = [ "nix-command" "flakes" ];
+	nix.optimise.automatic = true;
+	# Weekly GC that never leaves you without rescue entries: keep the last 10 system
+	# generations (regardless of age), then collect only what nothing references.
+	nix.gc = {
+		automatic = true;
+		dates = "weekly";
+		options = ""; # no age-based deletion; pruning is done by count below
+	};
+	systemd.services.nix-gc.preStart = ''
+		${config.nix.package}/bin/nix-env --profile /nix/var/nix/profiles/system --delete-generations +10
+	'';
+	boot.loader.systemd-boot.configurationLimit = 10;
 
 	## SYSTEM CONFIGURATION
+	# Kernel 7.x is required for the internal speakers/mic (ACP 7.0 SoundWire + cs35l56/cs42l43).
 	boot.kernelPackages = pkgs.linuxPackages_latest;
+	# amdgpu DC_DISABLE_REPLAY: with eDP Panel Replay enabled, kernel 7.x freezes the screen
+	# at the GDM greeter on this panel (UPGRADE_LOG steps 5/5b).
+	boot.kernelParams = [ "amdgpu.dcdebugmask=0x400" ];
 	system.stateVersion = "24.11";
 }

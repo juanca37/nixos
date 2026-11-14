@@ -12,9 +12,11 @@
       # });
     };
 
-  stable-packages = final: _prev: {
-    stable = import inputs.nixpkgs-stable {
-      system = final.system;
+  # Fast-moving apps from the separate `nixpkgs-latest` input, as `pkgs.latest.<name>`.
+  # Bump only these with: nix flake update nixpkgs-latest
+  latest-packages = final: _prev: {
+    latest = import inputs.nixpkgs-latest {
+      system = final.stdenv.hostPlatform.system;
       config.allowUnfree = true;
     };
   };
