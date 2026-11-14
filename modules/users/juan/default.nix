@@ -23,7 +23,8 @@
 
 		services.gpg-agent = {
 			enable = true;
-			enableSshSupport = true;
+			# SSH keys live in GNOME's gcr-ssh-agent (SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gcr/ssh);
+			# gpg-agent only handles GPG.
 			pinentry.package = pkgs.pinentry-gnome3; # Choose a pinentry flavor matching your desktop env
 		};
 

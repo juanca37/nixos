@@ -88,6 +88,18 @@
 
 	## NIX CONFIGURATION
 	nix.settings.experimental-features = [ "nix-command" "flakes" ];
+	nix.optimise.automatic = true;
+	# Weekly GC that never leaves you without rescue entries: keep the last 10 system
+	# generations (regardless of age), then collect only what nothing references.
+	nix.gc = {
+		automatic = true;
+		dates = "weekly";
+		options = ""; # no age-based deletion; pruning is done by count below
+	};
+	systemd.services.nix-gc.preStart = ''
+		${config.nix.package}/bin/nix-env --profile /nix/var/nix/profiles/system --delete-generations +10
+	'';
+	boot.loader.systemd-boot.configurationLimit = 10;
 
 	## SYSTEM CONFIGURATION
 	# Kernel 7.x is required for the internal speakers/mic (ACP 7.0 SoundWire + cs35l56/cs42l43).

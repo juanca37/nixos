@@ -16,10 +16,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
-    # Kept separate from the main `nixpkgs` pin so bumping fast-moving apps
-    # (like zoom-us) never drags the whole system (GNOME, mesa, kernel) along.
-    # Update just this input with: nix flake lock --update-input nixpkgs-latest
+    # Separate pin for fast-moving apps, exposed as `pkgs.latest.*` (overlays/default.nix).
+    # Bumping it never drags the system (GNOME, Mesa, kernel) along:
+    #   nix flake update nixpkgs-latest
     nixpkgs-latest.url = "github:nixos/nixpkgs/nixos-unstable";
 
     claude-code.url = "github:ryoppippi/nix-claude-code";
@@ -27,7 +26,7 @@
     omp.url = "github:can1357/oh-my-pi";
   };
 
-  outputs = { self, home-manager, nixpkgs, nixpkgs-latest, claude-code, omp, ... }@inputs:
+  outputs = { self, home-manager, nixpkgs, claude-code, omp, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -56,12 +55,7 @@
       {
         nixpkgs.overlays = [
           claude-code.overlays.default
-          (final: prev: {
-            zoom-us = (import nixpkgs-latest {
-              system = final.stdenv.hostPlatform.system;
-              config.allowUnfree = true;
-            }).zoom-us;
-          })
+          self.overlays.latest-packages
         ];
         home-manager.sharedModules = [
           omp.homeManagerModules.default

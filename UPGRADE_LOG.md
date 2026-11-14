@@ -2,6 +2,7 @@
 
 Rama: `upgrade/stepwise`. Un cambio de variable por paso. Nunca `switch`: `build` → diff → `sudo nixos-rebuild boot` → reinicio → resultado aquí.
 No borrar generaciones ni hacer GC durante el proceso. Excepción acordada el 2026-11-14 tras el paso 2: limpieza única conservando las 3 últimas (45, 46, 47).
+Desde el paso 7: GC automático semanal que conserva siempre las **10 últimas** generaciones del sistema (ver README).
 
 **Sesión nueva: leer este archivo primero y continuar por el primer paso sin resultado.**
 
@@ -15,6 +16,7 @@ No borrar generaciones ni hacer GC durante el proceso. Excepción acordada el 20
 | 49 | `f1e5c35` (26.05) | 6.18.63 | Paso 4 OK. GNOME 50.6. **Rescate principal moderno** (sin audio interno). |
 | 51 | `f1e5c35` (26.05) | 6.18.63 / 7.3.4 | Por defecto = 6.18.63. Entrada `k7-noreplay` (7.3.4 + `dcdebugmask=0x400`) probada OK. No usar `k7-noreplay-nopsr` (sin probar). |
 | 52 | `f1e5c35` (26.05) | 7.3.4 | Paso 5c OK. Kernel 7.3.4 + Panel Replay off, initrd scripted. **Rescate principal con audio interno.** |
+| 53 | `f1e5c35` (26.05) | 7.3.4 | Paso 6 OK. systemd-initrd. |
 | 50 | `f1e5c35` (26.05) | 7.3.4 | **KO**: greeter congelado. No arrancar. |
 | 45 | `6e98748` | 6.15.6 | Igual que 46 pero con niri. Nunca arrancada. |
 
@@ -96,4 +98,12 @@ Decisión 2026-11-14: solo GNOME, niri eliminado (no se prueba).
 | 5 | `6d529d6` | 50 | **KO** (2026-11-14) | Solo kernel: 6.18.63 → **7.3.4**. Síntoma: greeter de GDM congelado; no se puede entrar o no se ve. Journal (boot 236fcd16): gnome-shell 50.6 arranca y se registra en GDM a los 10 s, sin errores de amdgpu, KMS ni gnome-shell; luego botón de encendido → suspensión. Misma firmware DMUB 0x09005700 que en 6.18.63 (gen 49, OK) y mismo userland → **el culpable es el driver de pantalla de amdgpu en 7.x** (Display Core 3.2.351 → 3.2.392). Indicio: en 6.18 el kernel registra `eDP-1: PSR support 1`; en 7.2/7.3 esa línea desaparece, lo que encaja con que el eDP pase a Panel Replay [INFERENCIA]. Confirma también el KO de octubre (7.2.x). **Ojo:** la gen 50 queda como entrada por defecto del menú hasta instalar el paso 5b. |
 | 5b | `bd7588b` | 51 | **OK** (2026-11-14) en `k7-noreplay` | Entrada por defecto = kernel 6.18.63. Specialisations: `k7-noreplay` (`amdgpu.dcdebugmask=0x400`) y `k7-noreplay-nopsr` (`0x410`). **`k7-noreplay` OK**: kernel 7.3.4, greeter y sesión bien, apps lanzan, sin errores de amdgpu; ahora el kernel registra `eDP-1: PSR support 0`. Altavoces funcionan. → **Causa del congelado de GDM: eDP Panel Replay en el driver amdgpu de kernel 7.x.** `k7-noreplay-nopsr` no hizo falta. |
 | 5c | `070b2cc` | 52 | **OK** (2026-11-14) | Promovido `k7-noreplay` a la entrada por defecto: `linuxPackages_latest` + `amdgpu.dcdebugmask=0x400`; specialisations eliminadas. Kernel, initrd y kernel-params idénticos al boot `k7-noreplay`; `diff-closures` vacío. Closure `qhfa34bw…`. Arranca sin elegir nada en el menú; `uname -r` = 7.3.4. Suspensión/reanudación OK en el boot `k7-noreplay` (1 ciclo). |
-| 6 | (este commit) | 53 (prevista) | pendiente | Solo initrd: scripted → **systemd-initrd** (por defecto en 26.05; el scripted se elimina en 26.11). Desaparece el aviso de deprecación. Diff: solo `initrd-linux` (+13,4 MiB) y kernel-params añade `root=fstab` (lo pone el módulo de systemd-initrd). Kernel, GNOME, Mesa, Plymouth sin cambios; Plymouth pasa a arrancar dentro del initrd (como en las gens fallidas de octubre). Closure `l2vwsr53…`. |
+| 6 | `8f763ac` | 53 | **OK** (2026-11-14) | Solo initrd: scripted → **systemd-initrd** (por defecto en 26.05; el scripted se elimina en 26.11). Diff: solo `initrd-linux` y `root=fstab` en kernel-params. Plymouth, greeter, login, audio interno (4× "Calibration applied"): bien. → Plymouth en initrd no influía en el KO de octubre. |
+| 7 | (este commit) | 54 (prevista) | pendiente | Limpieza final, sin cambios de kernel/initrd/GNOME/Mesa (kernel e initrd idénticos a gen 53; systemd del sistema 260.5 igual). Overlay `pkgs.latest` (input `nixpkgs-latest`, actualizado a `d4f25a3` 2026-11-11) para slack 4.51, vscode 1.144, zoom 7.2.5, postman 12.20, bruno 4.3, drawio 32.6, dbeaver 26.2.4; eliminado el overlay suelto de zoom. Quitado el input `nixpkgs-stable` (23.11, sin uso). Integrado `hosts/common` (borrado): `nix.optimise`, GC semanal que poda a las 10 últimas generaciones (`nix-env --delete-generations +10`, probado en un perfil de prueba) y `configurationLimit = 10`. Un solo agente SSH: gcr (tiene las 2 claves); `services.gpg-agent.enableSshSupport` quitado (gpg-agent no tenía identidades). README con las dos vías de actualización. Closure `hj4771y2…`. Se puede aplicar con `switch` (sin cambio de kernel). |
+
+## Resumen
+
+- **Causa del congelado de GDM:** eDP Panel Replay en el driver de pantalla de amdgpu de kernel 7.x (7.2 y 7.3) en este panel. Arreglo: `amdgpu.dcdebugmask=0x400`. GNOME 49/50, Mesa 25.2/26.1, systemd-initrd, Plymouth, los dos agentes SSH y home-manager no tenían nada que ver.
+- **niri:** se quedaba muerto por la misma causa (kernel 7.2); eliminado por decisión del usuario.
+- **Audio interno:** requiere kernel 7.x; funciona desde el paso 5b.
+- **Estado final:** NixOS 26.05, GNOME 50.6, Mesa 26.1.8, kernel 7.3.4 (`linuxPackages_latest`) + Panel Replay off, systemd-initrd, home-manager release-26.05.

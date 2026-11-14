@@ -15,7 +15,6 @@
 		home.packages = with pkgs; [
 			kitty
 			firefox
-			slack
 			fzf
 			zoxide
 			eza
@@ -23,14 +22,18 @@
 			lazygit
 			gh
 			neovim
+		] ++ (with pkgs.latest; [
+			# Fast-moving apps: updated with `nix flake update nixpkgs-latest`
+			slack
 			postman
 			bruno
 			drawio
 			dbeaver-bin
 			zoom-us
-		];
+		]);
 		programs.vscode = {
 			enable = true;
+			package = pkgs.latest.vscode;
 		};
 	};
 }
