@@ -91,5 +91,8 @@
 
 	## SYSTEM CONFIGURATION
 	boot.kernelPackages = pkgs.linuxPackages_6_18;
+	# TEMPORARY (UPGRADE_LOG step 4): 26.05 defaults to the systemd initrd (used by every
+	# failed generation). Keep the scripted initrd so only userland changes in this step.
+	boot.initrd.systemd.enable = false;
 	system.stateVersion = "24.11";
 }
