@@ -5,7 +5,6 @@
 	let
 		outOfStore = path: config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/${path}";
 	in {
-		home.file.".config/niri/config.kdl".source = outOfStore "Projects/Dotfiles/niri/config.kdl";
 		home.file.".zshrc".source = outOfStore "Projects/Dotfiles/zsh/.zshrc";
 		home.file.".zsh_alias.conf".source = outOfStore "Projects/Dotfiles/zsh/.zsh_alias.conf";
 		home.file.".zsh_commands.conf".source = outOfStore "Projects/Dotfiles/zsh/.zsh_commands.conf";

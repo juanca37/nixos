@@ -4,7 +4,6 @@
 	imports = [
 		./hardware.nix
 		../../modules/hardware/boot-splash.nix
-		../../modules/desktop/niri.nix
 		../../common/docker.nix
 	];
 
@@ -45,6 +44,11 @@
 	services.flatpak.enable = true;
 	boot.initrd.kernelModules = [ "amdgpu" ];
 	services.xserver.videoDrivers = ["amdgpu"];
+	environment.sessionVariables = {
+		# Native Wayland for Firefox and Electron/Chromium apps
+		MOZ_ENABLE_WAYLAND = "1";
+		NIXOS_OZONE_WL = "1";
+	};
 	hardware.graphics = {
 		enable = true;
 	};

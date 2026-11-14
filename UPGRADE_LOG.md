@@ -40,14 +40,16 @@ home-manager: release-25.11 `3ee51fb`, release-26.05 `6eb2d33`, master `82ce401`
 
 | Paso | Cambio (única variable) | nixpkgs | HM | Kernel | GNOME | Mesa | initrd |
 |---|---|---|---|---|---|---|---|
-| 1 | Línea base (gen 45 = HEAD; renames sin efecto en el closure) | `6e98748` | `d0300c8` | 6.15.6 | 48.3 | 25.1.6 | scripted |
+| 1 | Línea base + **quitar niri** (solo GNOME; vars Wayland movidas al host) | `6e98748` | `d0300c8` | 6.15.6 | 48.3 | 25.1.6 | scripted |
 | 2 | nixpkgs → 25.11 + HM release-25.11 (follows). Kernel fijado al de `6e98748` | 25.11 | r-25.11 | 6.15.6 | 49.4 | 25.2.6 | scripted (fijado) |
 | 3 | Kernel → `linuxPackages_6_18` | 25.11 | r-25.11 | 6.18.37 | 49.4 | 25.2.6 | scripted |
 | 4 | nixpkgs → 26.05 + HM release-26.05 (kernel 6.18, solo sube el parche) | 26.05 | r-26.05 | 6.18.63 | 50.6 | 26.1.8 | scripted |
 | 5 | Kernel → `linuxPackages_latest` | 26.05 | r-26.05 | 7.3.4 | 50.6 | 26.1.8 | scripted |
 | 6 | (Opcional) nixos-unstable | unstable | master | — | 51.0 | 26.3.0 | — |
 
-Si un paso sale KO: revisar `journalctl -b -1`, proponer UN cambio aislado (orden: agente SSH único → sin Plymouth → sin `amdgpu` en initrd → sin niri) y explicar la hipótesis antes.
+Si un paso sale KO: revisar `journalctl -b -1`, proponer UN cambio aislado (orden: agente SSH único → sin Plymouth → sin `amdgpu` en initrd) y explicar la hipótesis antes.
+
+Decisión 2026-11-14: solo GNOME, niri eliminado (no se prueba).
 
 ## Protocolo de prueba (cada reinicio)
 
@@ -55,8 +57,7 @@ Si un paso sale KO: revisar `journalctl -b -1`, proponer UN cambio aislado (orde
 2. GDM → engranaje → **GNOME** → entrar.
 3. Super: ¿cuadrícula con apps? Abrir Consola y Firefox.
 4. Suspender desde el menú del sistema (no con el botón) y reanudar.
-5. Cerrar sesión → GDM → **niri** → `Mod+T` abre terminal?
-6. Si algo falla: `Ctrl+Alt+F3`, entrar y ejecutar:
+5. Si algo falla: `Ctrl+Alt+F3`, entrar y ejecutar:
    ```sh
    journalctl -b -o short-monotonic > ~/ko-journal.log
    systemctl --user show-environment > ~/ko-env.txt
@@ -69,4 +70,4 @@ Si un paso sale KO: revisar `journalctl -b -1`, proponer UN cambio aislado (orde
 | Paso | Commit | Gen | Resultado | Síntomas / notas |
 |---|---|---|---|---|
 | 0 | — | — | Diagnóstico hecho | Ver arriba |
-| 1 | (este commit) | 45 | pendiente | Sin `nixos-rebuild boot`: la gen 45 ya es la entrada por defecto. Closure `rbc6jzw4…` idéntico con y sin renames. |
+| 1 | (este commit) | 46 (prevista) | pendiente | Diff vs gen 45: solo sale niri 25.05.1, seatd, swaylock.pam, config.kdl. Kernel/GNOME/Mesa sin cambios. |
