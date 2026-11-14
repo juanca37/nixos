@@ -90,7 +90,8 @@
 	nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
 	## SYSTEM CONFIGURATION
-	boot.kernelPackages = pkgs.linuxPackages_6_18;
+	# Kernel 7.x is required for the internal speakers/mic (ACP 7.0 SoundWire + cs35l56).
+	boot.kernelPackages = pkgs.linuxPackages_latest;
 	# TEMPORARY (UPGRADE_LOG step 4): 26.05 defaults to the systemd initrd (used by every
 	# failed generation). Keep the scripted initrd so only userland changes in this step.
 	boot.initrd.systemd.enable = false;
