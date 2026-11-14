@@ -95,8 +95,5 @@
 	# amdgpu DC_DISABLE_REPLAY: with eDP Panel Replay enabled, kernel 7.x freezes the screen
 	# at the GDM greeter on this panel (UPGRADE_LOG steps 5/5b).
 	boot.kernelParams = [ "amdgpu.dcdebugmask=0x400" ];
-	# TEMPORARY (UPGRADE_LOG step 4): 26.05 defaults to the systemd initrd (used by every
-	# failed generation). Keep the scripted initrd so only userland changes in this step.
-	boot.initrd.systemd.enable = false;
 	system.stateVersion = "24.11";
 }
