@@ -24,7 +24,7 @@
 		services.gpg-agent = {
 			enable = true;
 			enableSshSupport = true;
-			pinentryPackage = pkgs.pinentry-gnome3; # Choose a pinentry flavor matching your desktop env
+			pinentry.package = pkgs.pinentry-gnome3; # Choose a pinentry flavor matching your desktop env
 		};
 
 		programs.git = {
