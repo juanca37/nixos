@@ -1,7 +1,7 @@
 # UPGRADE_LOG — zenbook-hexa
 
 Rama: `upgrade/stepwise`. Un cambio de variable por paso. Nunca `switch`: `build` → diff → `sudo nixos-rebuild boot` → reinicio → resultado aquí.
-Prohibido borrar generaciones o hacer GC durante el proceso.
+No borrar generaciones ni hacer GC durante el proceso. Excepción acordada el 2026-11-14 tras el paso 2: limpieza única conservando las 3 últimas (45, 46, 47).
 
 **Sesión nueva: leer este archivo primero y continuar por el primer paso sin resultado.**
 
@@ -9,9 +9,11 @@ Prohibido borrar generaciones o hacer GC durante el proceso.
 
 | Gen | nixpkgs | Kernel | Estado |
 |---|---|---|---|
-| 40 | `6e98748` (2025-07-16) | 6.15.6 | Arrancada a diario (boot 0 desde 2026-10-29). Buena. |
-| 41 | `6e98748` | 6.15.6 | Buena (boots -7, -5). |
-| 45 | `6e98748` | 6.15.6 | = HEAD de `main` (incluye `bec599c` zona horaria). Aplicada en caliente; pendiente de arrancar (paso 1). |
+| 46 | `6e98748` (2025-07-16) | 6.15.6 | Paso 1 OK. GNOME 48. Rescate principal con la base vieja. |
+| 47 | `b6018f8` (25.11) | 6.15.6 | Paso 2 OK. GNOME 49. |
+| 45 | `6e98748` | 6.15.6 | Igual que 46 pero con niri. Nunca arrancada. |
+
+Gens 1–44 (incluidas 40/41 y las fallidas 13/16/30/42/43) borradas a petición tras el paso 2. Su journal sigue disponible (`journalctl --list-boots`).
 
 ## Paso 0 — Diagnóstico (2026-11-14)
 
@@ -71,4 +73,4 @@ Decisión 2026-11-14: solo GNOME, niri eliminado (no se prueba).
 |---|---|---|---|---|
 | 0 | — | — | Diagnóstico hecho | Ver arriba |
 | 1 | `4cba327` | 46 | **OK** (2026-11-14) | nixpkgs `6e98748`, HM `d0300c8`, kernel 6.15.6, GNOME 48.3, Mesa 25.1.6. Diff vs gen 45: solo sale niri 25.05.1, seatd, swaylock.pam, config.kdl. Login, apps, suspensión: bien. Nueva generación de rescate. |
-| 2 | (este commit) | 47 (prevista) | pendiente | nixpkgs `b6018f8` (25.11, 2026-06-30, rama ya sin soporte), HM `3ee51fb` (release-25.11, follows). Kernel **mismo binario** 6.15.6 vía input temporal `nixpkgs-kernel`; initrd scripted. GNOME 48.3→49.4, mutter 49.4, GDM 49.2, gnome-session 49.2, Mesa 25.1.6→25.2.6, linux-firmware 20260622, systemd 258.7, docker 28.5.2 (permitido temporalmente como inseguro). Renames git `settings.user.*` y `stdenv.hostPlatform.system`. Closure `ba7b1vfa…`. |
+| 2 | `1288042` | 47 | **OK** (2026-11-14) | nixpkgs `b6018f8` (25.11, 2026-06-30, rama ya sin soporte), HM `3ee51fb` (release-25.11, follows). Kernel **mismo binario** 6.15.6 vía input temporal `nixpkgs-kernel`; initrd scripted. GNOME 48.3→49.4, mutter 49.4, GDM 49.2, gnome-session 49.2, Mesa 25.1.6→25.2.6, linux-firmware 20260622, systemd 258.7, docker 28.5.2 (permitido temporalmente como inseguro). Renames git `settings.user.*` y `stdenv.hostPlatform.system`. Closure `ba7b1vfa…`. Cuadrícula de apps, apps, suspensión y docker: bien. → GNOME 49 + Mesa 25.2 no son el problema. |
