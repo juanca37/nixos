@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, ... }:
 
 {
 	imports = [
@@ -90,7 +90,6 @@
 	nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
 	## SYSTEM CONFIGURATION
-	# TEMPORARY (UPGRADE_LOG step 2): kernel 6.15.6 from the pre-upgrade nixpkgs.
-	boot.kernelPackages = inputs.nixpkgs-kernel.legacyPackages.${pkgs.stdenv.hostPlatform.system}.linuxPackages_latest;
+	boot.kernelPackages = pkgs.linuxPackages_6_18;
 	system.stateVersion = "24.11";
 }
