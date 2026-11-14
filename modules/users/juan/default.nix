@@ -29,8 +29,10 @@
 
 		programs.git = {
 			enable = true;
-			userName = "juanca37";
-			userEmail = "juancarrascoalonso@hotmail.com";
+			settings.user = {
+				name = "juanca37";
+				email = "juancarrascoalonso@hotmail.com";
+			};
 		};
 
 		programs.omp = {

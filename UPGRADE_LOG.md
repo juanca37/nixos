@@ -70,4 +70,5 @@ Decisión 2026-11-14: solo GNOME, niri eliminado (no se prueba).
 | Paso | Commit | Gen | Resultado | Síntomas / notas |
 |---|---|---|---|---|
 | 0 | — | — | Diagnóstico hecho | Ver arriba |
-| 1 | (este commit) | 46 (prevista) | pendiente | Diff vs gen 45: solo sale niri 25.05.1, seatd, swaylock.pam, config.kdl. Kernel/GNOME/Mesa sin cambios. |
+| 1 | `4cba327` | 46 | **OK** (2026-11-14) | nixpkgs `6e98748`, HM `d0300c8`, kernel 6.15.6, GNOME 48.3, Mesa 25.1.6. Diff vs gen 45: solo sale niri 25.05.1, seatd, swaylock.pam, config.kdl. Login, apps, suspensión: bien. Nueva generación de rescate. |
+| 2 | (este commit) | 47 (prevista) | pendiente | nixpkgs `b6018f8` (25.11, 2026-06-30, rama ya sin soporte), HM `3ee51fb` (release-25.11, follows). Kernel **mismo binario** 6.15.6 vía input temporal `nixpkgs-kernel`; initrd scripted. GNOME 48.3→49.4, mutter 49.4, GDM 49.2, gnome-session 49.2, Mesa 25.1.6→25.2.6, linux-firmware 20260622, systemd 258.7, docker 28.5.2 (permitido temporalmente como inseguro). Renames git `settings.user.*` y `stdenv.hostPlatform.system`. Closure `ba7b1vfa…`. |
