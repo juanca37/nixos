@@ -11,9 +11,12 @@ No borrar generaciones ni hacer GC durante el proceso. Excepción acordada el 20
 |---|---|---|---|
 | 46 | `6e98748` (2025-07-16) | 6.15.6 | Paso 1 OK. GNOME 48. Rescate principal con la base vieja. |
 | 47 | `b6018f8` (25.11) | 6.15.6 | Paso 2 OK. GNOME 49. |
+| 48 | `b6018f8` (25.11) | 6.18.37 | Paso 3 OK. GNOME 49. |
 | 45 | `6e98748` | 6.15.6 | Igual que 46 pero con niri. Nunca arrancada. |
 
 Gens 1–44 (incluidas 40/41 y las fallidas 13/16/30/42/43) borradas a petición tras el paso 2. Su journal sigue disponible (`journalctl --list-boots`).
+
+Menú de arranque: tras la limpieza seguían apareciendo 34 entradas antiguas `nixos-<hash64>.conf` (formato de nombre de otro builder de systemd-boot, probablemente el de las gens unstable/26.05); el builder de 25.11 solo poda `nixos-generation-N.conf`. Se borran a mano (ver "Audio y menú").
 
 ## Paso 0 — Diagnóstico (2026-11-14)
 
@@ -26,6 +29,14 @@ Gens 1–44 (incluidas 40/41 y las fallidas 13/16/30/42/43) borradas a petición
 - Descartado como causa: dos agentes SSH (gcr + gpg-agent activos también en boots buenos). Se limpiará igualmente.
 - home-manager en master: real, pero solo afecta a la sesión/evaluación. Se fija a rama release al subir nixpkgs.
 - Pulsar el botón de encendido = suspender (gsd-media-keys). No usarlo durante las pruebas.
+
+## Audio interno (altavoces + micro)
+
+- **Nunca ha funcionado** en kernels 6.x (confirmado por el usuario). Bluetooth sí.
+- Hardware: ACP 7.0 + SoundWire + 4 amplificadores Cirrus cs35l56 + DMIC.
+- Kernel 6.15.6 y 6.18.x (incluida gen 1 y gen 48): `acp_asoc_acp70.0: No matching ASoC machine driver found` → solo existe la tarjeta HDMI (`HD-Audio Generic`).
+- Kernel 7.2.x (gens fallidas): se registra la tarjeta `amd-soundwire` (card1), firmware DSP de los cs35l56 cargado y "Calibration applied" ×4.
+- Conclusión: el soporte llega con kernel 7.x → el paso 5 (`linuxPackages_latest` 7.3.4) es también el que debería arreglar el audio. Verificar entonces altavoces y micro.
 
 ## Versiones disponibles (evaluado 2026-11-14)
 
@@ -74,4 +85,4 @@ Decisión 2026-11-14: solo GNOME, niri eliminado (no se prueba).
 | 0 | — | — | Diagnóstico hecho | Ver arriba |
 | 1 | `4cba327` | 46 | **OK** (2026-11-14) | nixpkgs `6e98748`, HM `d0300c8`, kernel 6.15.6, GNOME 48.3, Mesa 25.1.6. Diff vs gen 45: solo sale niri 25.05.1, seatd, swaylock.pam, config.kdl. Login, apps, suspensión: bien. Nueva generación de rescate. |
 | 2 | `1288042` | 47 | **OK** (2026-11-14) | nixpkgs `b6018f8` (25.11, 2026-06-30, rama ya sin soporte), HM `3ee51fb` (release-25.11, follows). Kernel **mismo binario** 6.15.6 vía input temporal `nixpkgs-kernel`; initrd scripted. GNOME 48.3→49.4, mutter 49.4, GDM 49.2, gnome-session 49.2, Mesa 25.1.6→25.2.6, linux-firmware 20260622, systemd 258.7, docker 28.5.2 (permitido temporalmente como inseguro). Renames git `settings.user.*` y `stdenv.hostPlatform.system`. Closure `ba7b1vfa…`. Cuadrícula de apps, apps, suspensión y docker: bien. → GNOME 49 + Mesa 25.2 no son el problema. |
-| 3 | (este commit) | 48 (prevista) | pendiente | Solo kernel: 6.15.6 → 6.18.37 (`linuxPackages_6_18` de 25.11). Eliminado el input temporal `nixpkgs-kernel`. Diff: solo kernel, módulos e initrd regenerado; initrd sigue scripted, Plymouth igual. nixpkgs/HM/GNOME/Mesa sin cambios. Closure `lhjg21x4…`. |
+| 3 | `c2e44f4` | 48 | **OK** (2026-11-14) | Solo kernel: 6.15.6 → 6.18.37 (`linuxPackages_6_18` de 25.11). Eliminado el input temporal `nixpkgs-kernel`. Diff: solo kernel, módulos e initrd regenerado; initrd sigue scripted, Plymouth igual. nixpkgs/HM/GNOME/Mesa sin cambios. Closure `lhjg21x4…`. Todo bien. Audio interno sigue sin funcionar (igual que siempre en 6.x, ver sección Audio). |
