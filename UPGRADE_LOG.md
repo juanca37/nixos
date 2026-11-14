@@ -12,7 +12,9 @@ No borrar generaciones ni hacer GC durante el proceso. Excepción acordada el 20
 | 46 | `6e98748` (2025-07-16) | 6.15.6 | Paso 1 OK. GNOME 48. Rescate principal con la base vieja. |
 | 47 | `b6018f8` (25.11) | 6.15.6 | Paso 2 OK. GNOME 49. |
 | 48 | `b6018f8` (25.11) | 6.18.37 | Paso 3 OK. GNOME 49. |
-| 49 | `f1e5c35` (26.05) | 6.18.63 | Paso 4 OK. GNOME 50.6. **Rescate principal moderno.** |
+| 49 | `f1e5c35` (26.05) | 6.18.63 | Paso 4 OK. GNOME 50.6. **Rescate principal moderno** (sin audio interno). |
+| 51 | `f1e5c35` (26.05) | 6.18.63 / 7.3.4 | Por defecto = 6.18.63. Entrada `k7-noreplay` (7.3.4 + `dcdebugmask=0x400`) probada OK. No usar `k7-noreplay-nopsr` (sin probar). |
+| 50 | `f1e5c35` (26.05) | 7.3.4 | **KO**: greeter congelado. No arrancar. |
 | 45 | `6e98748` | 6.15.6 | Igual que 46 pero con niri. Nunca arrancada. |
 
 Gens 1–44 (incluidas 40/41 y las fallidas 13/16/30/42/43) borradas a petición tras el paso 2. Su journal sigue disponible (`journalctl --list-boots`).
@@ -37,8 +39,9 @@ Menú de arranque: tras la limpieza seguían apareciendo 34 entradas antiguas `n
 - Hardware: ACP 7.0 + SoundWire + 4 amplificadores Cirrus cs35l56 + DMIC.
 - Kernel 6.15.6 y 6.18.x (incluida gen 1 y gen 48): `acp_asoc_acp70.0: No matching ASoC machine driver found` → solo existe la tarjeta HDMI (`HD-Audio Generic`).
 - Kernel 7.2.x (gens fallidas): se registra la tarjeta `amd-soundwire` (card1), firmware DSP de los cs35l56 cargado y "Calibration applied" ×4.
-- Kernel 7.3.4 (gen 50, boot del 2026-11-14 19:23): `cs42l43 sdw:0:1:01fa:4243:01: Initialization not complete` y `platform amd_sdw: deferred probe pending`. Sin "Calibration applied" en el minuto que duró el arranque. Revisar en cuanto un kernel 7.x arranque con pantalla usable.
-- Conclusión: el soporte llega con kernel 7.x, pero 7.x congela la pantalla (paso 5). El audio depende de arreglar eso primero (paso 5b).
+- Kernel 7.3.4 (gen 50, boot del 2026-11-14 19:23): `cs42l43 sdw:0:1:01fa:4243:01: Initialization not complete` y `platform amd_sdw: deferred probe pending` en el minuto que duró el arranque (pantalla congelada).
+- Kernel 7.3.4 + `amdgpu.dcdebugmask=0x400` (gen 51 `k7-noreplay`): tarjeta `amd-soundwire` (card1, `ZenbookS16UM5606GA`), cs42l43 inicializa, cs35l56 "Calibration applied" ×4. PipeWire: sinks Speaker + Headphones, source Microphones. **Altavoces funcionan** (confirmado por el usuario).
+- Conclusión: el audio interno necesita kernel 7.x; con Panel Replay desactivado, 7.x es usable.
 
 ## Versiones disponibles (evaluado 2026-11-14)
 
@@ -90,4 +93,5 @@ Decisión 2026-11-14: solo GNOME, niri eliminado (no se prueba).
 | 3 | `c2e44f4` | 48 | **OK** (2026-11-14) | Solo kernel: 6.15.6 → 6.18.37 (`linuxPackages_6_18` de 25.11). Eliminado el input temporal `nixpkgs-kernel`. Diff: solo kernel, módulos e initrd regenerado; initrd sigue scripted, Plymouth igual. nixpkgs/HM/GNOME/Mesa sin cambios. Closure `lhjg21x4…`. Todo bien. Audio interno sigue sin funcionar (igual que siempre en 6.x, ver sección Audio). |
 | 4 | `1e9b071` | 49 | **OK** (2026-11-14) | nixpkgs `f1e5c35` (26.05, 2026-11-13), HM `6eb2d33` (release-26.05, follows). Kernel 6.18.37 → 6.18.63 (misma serie). **initrd scripted fijado** (`boot.initrd.systemd.enable = false`, temporal: 26.05 usa systemd-initrd por defecto, y el scripted desaparece en 26.11). GNOME 49.4→50.6, mutter 50.6, GDM 50.3, gnome-session 50.1, gnome-keyring 50.0, Mesa 25.2.6→26.1.8, linux-firmware 20261019, systemd 260.5, pipewire 1.6.6, Plymouth 26.134, docker 28.5.2→29.9.3 (por defecto de 26.05; quitada la excepción de inseguro). Closure `4pqj8xmn…`. Cuadrícula con apps, apps lanzan (kitty, Zoom), GNOME 50 ofrece más niveles de escalado. → **GNOME 50 + Mesa 26.1 no son el problema.** Sospechosos restantes: kernel 7.x, systemd-initrd, Mesa 26.2+. |
 | 5 | `6d529d6` | 50 | **KO** (2026-11-14) | Solo kernel: 6.18.63 → **7.3.4**. Síntoma: greeter de GDM congelado; no se puede entrar o no se ve. Journal (boot 236fcd16): gnome-shell 50.6 arranca y se registra en GDM a los 10 s, sin errores de amdgpu, KMS ni gnome-shell; luego botón de encendido → suspensión. Misma firmware DMUB 0x09005700 que en 6.18.63 (gen 49, OK) y mismo userland → **el culpable es el driver de pantalla de amdgpu en 7.x** (Display Core 3.2.351 → 3.2.392). Indicio: en 6.18 el kernel registra `eDP-1: PSR support 1`; en 7.2/7.3 esa línea desaparece, lo que encaja con que el eDP pase a Panel Replay [INFERENCIA]. Confirma también el KO de octubre (7.2.x). **Ojo:** la gen 50 queda como entrada por defecto del menú hasta instalar el paso 5b. |
-| 5b | (este commit) | 51 (prevista) | pendiente | Entrada por defecto = gen 49 (kernel 6.18.63, mismo binario); nada cambia al arrancar normal. Dos `specialisation` en el menú, cada una = gen 50 + UN parámetro: `k7-noreplay` (`amdgpu.dcdebugmask=0x400`, Panel Replay off) y `k7-noreplay-nopsr` (`0x410`, Replay + PSR off). Closure `3vkq155i…`. Probar primero `k7-noreplay`; solo si KO, `k7-noreplay-nopsr`. |
+| 5b | `bd7588b` | 51 | **OK** (2026-11-14) en `k7-noreplay` | Entrada por defecto = kernel 6.18.63. Specialisations: `k7-noreplay` (`amdgpu.dcdebugmask=0x400`) y `k7-noreplay-nopsr` (`0x410`). **`k7-noreplay` OK**: kernel 7.3.4, greeter y sesión bien, apps lanzan, sin errores de amdgpu; ahora el kernel registra `eDP-1: PSR support 0`. Altavoces funcionan. → **Causa del congelado de GDM: eDP Panel Replay en el driver amdgpu de kernel 7.x.** `k7-noreplay-nopsr` no hizo falta. |
+| 5c | (este commit) | 52 (prevista) | pendiente | Promover `k7-noreplay` a la entrada por defecto: `linuxPackages_latest` + `amdgpu.dcdebugmask=0x400`; specialisations eliminadas. Verificado: kernel, initrd y kernel-params idénticos al boot `k7-noreplay` y `diff-closures` vacío. Closure `qhfa34bw…`. Pendiente de confirmar antes de instalar: suspensión/reanudación y micro en `k7-noreplay`. |

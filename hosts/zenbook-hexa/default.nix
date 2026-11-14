@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
 	imports = [
@@ -90,24 +90,11 @@
 	nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
 	## SYSTEM CONFIGURATION
-	# Kernel 7.x freezes the screen at the GDM greeter on this panel (UPGRADE_LOG step 5),
-	# so the default entry stays on the 6.18 LTS series.
-	boot.kernelPackages = pkgs.linuxPackages_6_18;
-
-	# TEMPORARY (UPGRADE_LOG step 5b): extra boot-menu entries that test kernel 7.x with one
-	# amdgpu display feature disabled each. Kernel 7.x is needed for the internal speakers/mic.
-	specialisation = {
-		# DC_DISABLE_REPLAY: eDP Panel Replay off.
-		k7-noreplay.configuration = {
-			boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
-			boot.kernelParams = [ "amdgpu.dcdebugmask=0x400" ];
-		};
-		# DC_DISABLE_REPLAY | DC_DISABLE_PSR: Panel Replay and PSR both off.
-		k7-noreplay-nopsr.configuration = {
-			boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
-			boot.kernelParams = [ "amdgpu.dcdebugmask=0x410" ];
-		};
-	};
+	# Kernel 7.x is required for the internal speakers/mic (ACP 7.0 SoundWire + cs35l56/cs42l43).
+	boot.kernelPackages = pkgs.linuxPackages_latest;
+	# amdgpu DC_DISABLE_REPLAY: with eDP Panel Replay enabled, kernel 7.x freezes the screen
+	# at the GDM greeter on this panel (UPGRADE_LOG steps 5/5b).
+	boot.kernelParams = [ "amdgpu.dcdebugmask=0x400" ];
 	# TEMPORARY (UPGRADE_LOG step 4): 26.05 defaults to the systemd initrd (used by every
 	# failed generation). Keep the scripted initrd so only userland changes in this step.
 	boot.initrd.systemd.enable = false;
