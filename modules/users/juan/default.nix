@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-	home-manager.users.juan = { ... }: {
+	home-manager.users.juan = { lib, ... }: {
 		home.stateVersion = "24.11";
 	
 		home.packages = with pkgs; [
@@ -36,9 +36,26 @@
 			};
 		};
 
-		programs.omp = {
-			enable = true;
-			settings.startup.quiet = true;
-		};
+		programs.omp.enable = true;
+
+		# Not `programs.omp.settings`: that activation `install`s a fresh config.yml,
+		# and home-manager-juan.service re-activates on every boot, wiping runtime
+		# state (setupVersion → onboarding reruns, model roles, ...). Deep-merge the
+		# declared keys into the existing file instead; declared values win.
+		home.activation.ompConfigMerge = let
+			settings = (pkgs.formats.yaml { }).generate "omp-settings.yml" {
+				startup.quiet = true;
+				# Custom theme in ~/.omp/agent/themes/: blue background on user messages.
+				theme.dark = "titanium-contrast";
+			};
+		in lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+			ompCfg="$HOME/.omp/agent/config.yml"
+			run mkdir -p "$HOME/.omp/agent"
+			if [ -f "$ompCfg" ]; then
+				run ${pkgs.yq-go}/bin/yq -i '. *= load("${settings}")' "$ompCfg"
+			else
+				run install -m 600 ${settings} "$ompCfg"
+			fi
+		'';
 	};
 }
