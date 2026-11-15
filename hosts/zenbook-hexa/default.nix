@@ -5,6 +5,7 @@
 		./hardware.nix
 		../../modules/hardware/boot-splash.nix
 		../../common/docker.nix
+		../../common/niri.nix
 	];
 
 	programs.nix-ld.enable = true;

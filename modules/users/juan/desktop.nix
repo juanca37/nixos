@@ -12,6 +12,7 @@
 		home.file.".zsh_syngenta.conf".source = outOfStore "Projects/Dotfiles/zsh/.zsh_syngenta.conf";
 		home.file.".tmux.conf".source = outOfStore "Projects/Dotfiles/tmux/.tmux.conf";
 		home.file.".theme.conf".source = outOfStore "Projects/Dotfiles/tmux/.theme.conf";
+		xdg.configFile."niri/config.kdl".source = outOfStore "Projects/Dotfiles/niri/config.kdl";
 		# Nix-provided tmux plugins; sourced (quietly) from the Dotfiles .tmux.conf.
 		home.file.".tmux-plugins.conf".text = let
 			tmuxFzfWindowSwitch = pkgs.writeShellScript "tmux-fzf-window-switch" ''
