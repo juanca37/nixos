@@ -1,6 +1,6 @@
 # nixcfg — zenbook-hexa
 
-NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`. Desktop: GNOME (GDM, Wayland).
+NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`. Desktop: GNOME (GDM, Wayland), plus niri as an optional session.
 
 ## Layout
 
@@ -10,6 +10,7 @@ NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`.
 | `hosts/zenbook-hexa/` | Host config: boot, kernel, GNOME, Nix GC, hardware |
 | `modules/users/juan/` | User + home-manager (CLI tools, apps, git, gpg) |
 | `modules/hardware/boot-splash.nix` | Plymouth + quiet boot |
+| `common/niri.nix` | niri session + Noctalia shell; GNOME stays GDM's default |
 | `overlays/default.nix` | `pkgs.latest.*` overlay (fast-moving apps) |
 | `UPGRADE_LOG.md` | History of the 2026-11 stepwise upgrade and why the kernel needs a quirk |
 
@@ -72,5 +73,15 @@ Never run `nix-collect-garbage -d` or `--delete-older-than` by hand: they can le
 ## Notes
 
 - SSH keys are served by GNOME's agent (`SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gcr/ssh`); gpg-agent only handles GPG.
-- Dotfiles (zsh, tmux) are symlinked out of the store from `~/Projects/Dotfiles`.
+- Dotfiles (zsh, tmux, niri, noctalia) are symlinked out of the store from `~/Projects/Dotfiles`.
 - `home/` and `archive/` are not used by the flake.
+
+## niri (optional session)
+
+At the GDM login screen pick the user, then the gear icon → **Niri**. GDM goes back to GNOME on every boot (`services.displayManager.defaultSession = "gnome"`), so trying niri never changes the default.
+
+- `Mod` = Super (Windows key). `Mod+Shift+'` (i.e. `Mod+?`) lists the important hotkeys.
+- `Mod+Space` launcher, `Mod+T` kitty, `Mod+S` control center, `Mod+Shift+,` Noctalia settings, `Super+Alt+L` lock, `Mod+O` overview, `Mod+Shift+E` quit.
+- The bar, launcher, notifications, lock screen and wallpaper are all Noctalia (`pkgs.latest.noctalia`), started by niri's `spawn-at-startup`.
+- Configs: `Dotfiles/niri/config.kdl`, `Dotfiles/noctalia/config.toml`. Settings changed in the Noctalia GUI are saved to `~/.local/state/noctalia/settings.toml` (not in Dotfiles) and override the TOML.
+- niri reloads `config.kdl` on save; check it with `niri validate`. Noctalia: `noctalia config validate`.

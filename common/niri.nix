@@ -9,5 +9,6 @@
 
 	environment.systemPackages = with pkgs; [
 		xwayland-satellite # niri spawns it on demand for X11-only apps
+		latest.noctalia # desktop shell (bar, launcher, notifications, lock); started by niri's config
 	];
 }
