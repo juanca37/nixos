@@ -33,10 +33,10 @@ sudo nixos-rebuild switch --flake .#zenbook-hexa
 
 No reboot needed. To move another app to this track, list it under `with pkgs.latest; [ ... ]` in `modules/users/juan/desktop.nix` (or set `package = pkgs.latest.<name>;` for `programs.*` options, like VS Code).
 
-Claude Code and omp come from their own flake inputs, not `pkgs.latest`. Update them the same way, by input name:
+Claude Code, Claude Desktop and omp come from their own flake inputs, not `pkgs.latest`. Update them the same way, by input name:
 
 ```sh
-nix flake update claude-code omp
+nix flake update claude-code claude-desktop omp
 ```
 
 `nix flake update` with no arguments updates **everything**, system included. Always name the inputs.

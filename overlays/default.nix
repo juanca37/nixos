@@ -7,9 +7,15 @@
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev:
     {
-      # example = prev.example.overrideAttrs (oldAttrs: rec {
-      # ...
-      # });
+      claude-desktop = prev.claude-desktop.overrideAttrs (old: {
+        postFixup = (old.postFixup or "") + ''
+          wrapProgram $out/bin/claude-desktop \
+            --prefix PATH : ${final.writeShellScriptBin "xdg-open" ''
+              unset LD_LIBRARY_PATH
+              exec /run/current-system/sw/bin/xdg-open "$@"
+            ''}/bin
+        '';
+      });
     };
 
   # Fast-moving apps from the separate `nixpkgs-latest` input, as `pkgs.latest.<name>`.

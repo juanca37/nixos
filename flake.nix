@@ -22,11 +22,16 @@
     nixpkgs-latest.url = "github:nixos/nixpkgs/nixos-unstable";
 
     claude-code.url = "github:ryoppippi/nix-claude-code";
+    # Claude Desktop: community repack of Anthropic's official Linux .deb.
+    claude-desktop = {
+      url = "github:poeck/claude-desktop-nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     omp.url = "github:can1357/oh-my-pi";
   };
 
-  outputs = { self, home-manager, nixpkgs, claude-code, omp, ... }@inputs:
+  outputs = { self, home-manager, nixpkgs, claude-code, claude-desktop, omp, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -55,6 +60,8 @@
       {
         nixpkgs.overlays = [
           claude-code.overlays.default
+          claude-desktop.overlays.default
+          self.overlays.modifications
           self.overlays.latest-packages
         ];
         home-manager.sharedModules = [
