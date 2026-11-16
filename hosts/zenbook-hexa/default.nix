@@ -54,6 +54,22 @@
 		enable = true;
 	};
 
+	## AUDIO (PipeWire comes with GNOME)
+	# Call apps auto-adjust the mic level while you talk (Zoom's "Automatically adjust microphone
+	# volume", Chromium's WebRTC gain control in Slack). Ignore their mic-level changes; mute
+	# and the volume you set yourself still work. Takes effect after: systemctl --user restart pipewire-pulse
+	services.pipewire.extraConfig.pipewire-pulse."50-block-app-mic-gain" = {
+		"pulse.rules" = [
+			{
+				matches = [
+					{ "application.process.binary" = "zoom"; }
+					{ "application.process.binary" = "slack"; }
+				];
+				actions.quirks = [ "block-source-volume" ];
+			}
+		];
+	};
+
 	## PRINTING
 	services.printing = {
 		enable = true;
