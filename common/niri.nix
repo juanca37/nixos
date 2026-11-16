@@ -76,6 +76,22 @@ let
 				done
 		'';
 	};
+
+	# Zoom only lines up screen-share annotations with the cursor at output scale 1 (at 1.5 it
+	# limits drawing to the top-left 2/3 of the screen). Toggles the focused output between scale 1
+	# for sharing and niri's automatic scale (1.5 on this panel). Bound to Mod+Z in config.kdl.
+	niri-zoom-present-scale = pkgs.writeShellApplication {
+		name = "niri-zoom-present-scale";
+		runtimeInputs = [ config.programs.niri.package pkgs.jq ];
+		text = ''
+			read -r name at_one < <(niri msg --json focused-output | jq -r '"\(.name) \(.logical.scale == 1)"')
+			if [ "$at_one" = true ]; then
+				niri msg output "$name" scale auto
+			else
+				niri msg output "$name" scale 1
+			fi
+		'';
+	};
 in
 {
 	# Adds "Niri" to GDM's session picker (gear icon after choosing the user).
@@ -89,5 +105,6 @@ in
 		xwayland-satellite # niri spawns it on demand for X11-only apps
 		latest.noctalia # desktop shell (bar, launcher, notifications, lock); started by niri's config
 		niri-zoom-share-follow
+		niri-zoom-present-scale
 	];
 }
