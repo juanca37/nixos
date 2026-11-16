@@ -57,6 +57,7 @@
 			}
 			./modules/users/juan/default.nix
 			./modules/users/juan/desktop.nix
+			./modules/users/juan/kubernetes.nix
       {
         nixpkgs.overlays = [
           claude-code.overlays.default
