@@ -45,7 +45,6 @@
 			zoxide
 			eza
 			bat
-			lazygit
 			gh
 			neovim
 		] ++ (with pkgs.latest; [
@@ -60,6 +59,19 @@
 		programs.vscode = {
 			enable = true;
 			package = pkgs.latest.vscode;
+		};
+		# Screenshot annotation (arrows, boxes, blur, text). Super+Shift+S in niri pipes a
+		# Noctalia region capture into it: Enter copies and closes, Ctrl+S saves and closes.
+		programs.satty = {
+			enable = true;
+			settings.general = {
+				early-exit = true;
+				initial-tool = "arrow";
+				actions-on-enter = [ "save-to-clipboard" ];
+				# wl-copy keeps the image in the clipboard after satty exits.
+				copy-command = "${pkgs.wl-clipboard}/bin/wl-copy";
+				output-filename = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S annotated.png";
+			};
 		};
 	};
 }

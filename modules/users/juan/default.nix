@@ -36,6 +36,25 @@
 			};
 		};
 
+		# Syntax-highlighted git diffs (git pager + `git add -p` filter).
+		programs.delta = {
+			enable = true;
+			enableGitIntegration = true;
+			options = {
+				navigate = true; # n / N jump between files
+				line-numbers = true;
+				syntax-theme = "gruvbox-dark";
+			};
+		};
+
+		programs.lazygit = {
+			enable = true;
+			# Delta also renders lazygit's diffs; it reads the options above from git's config.
+			settings.git.diffRenderers = [
+				{ command = "delta --{{colorScheme}} --paging=never"; }
+			];
+		};
+
 		programs.omp.enable = true;
 
 		# Not `programs.omp.settings`: that activation `install`s a fresh config.yml,
