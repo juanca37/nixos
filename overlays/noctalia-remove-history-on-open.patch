@@ -1,0 +1,36 @@
+Remove a notification from history once it is opened (any action invoked or
+inline reply sent), whether from the toast or from the control-center list.
+Upstream only hides the toast and keeps the history entry.
+
+--- a/src/notification/notification_manager.cpp
++++ b/src/notification/notification_manager.cpp
+@@ -524,15 +524,11 @@
+ }
+ 
+ void NotificationManager::dismissAfterInvoke(uint32_t id) {
++  // Opening a notification (toast or history) also removes it from history.
+   if (m_idToIndex.contains(id)) {
+     (void)close(id, CloseReason::Dismissed);
+-  } else if (const auto histIt = m_historyIndex.find(id); histIt != m_historyIndex.end()) {
+-    emitPendingDBusClose(id, CloseReason::Dismissed);
+-    m_history[histIt->second].notification.actions.clear();
+-    m_history[histIt->second].active = false;
+-    ++m_changeSerial;
+-    schedulePersistHistory();
+   }
++  removeHistoryEntry(id, CloseReason::Dismissed);
+ }
+ 
+ bool NotificationManager::invokeAction(
+--- a/tests/notification_inline_reply_test.cpp
++++ b/tests/notification_inline_reply_test.cpp
+@@ -58,8 +58,7 @@
+ 
+   // Notification was dismissed upon replying
+   TEST_CHECK(manager.all().empty());
+-  TEST_CHECK(manager.history().size() == 1);
+-  TEST_CHECK(!manager.history().front().active);
++  TEST_CHECK(manager.history().empty());
+   TEST_CHECK(closes.size() == 1);
+   TEST_CHECK(closes[0].first == notif1);
+   TEST_CHECK(closes[0].second == CloseReason::Dismissed);

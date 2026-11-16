@@ -24,6 +24,16 @@
     latest = import inputs.nixpkgs-latest {
       system = final.stdenv.hostPlatform.system;
       config.allowUnfree = true;
+      overlays = [
+        (_lfinal: lprev: {
+          # Opening a notification removes it from the bell's history.
+          # If this stops applying after a bump, check whether upstream changed
+          # NotificationManager::dismissAfterInvoke.
+          noctalia = lprev.noctalia.overrideAttrs (old: {
+            patches = (old.patches or [ ]) ++ [ ./noctalia-remove-history-on-open.patch ];
+          });
+        })
+      ];
     };
   };
 }

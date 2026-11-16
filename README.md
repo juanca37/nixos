@@ -83,5 +83,6 @@ At the GDM login screen pick the user, then the gear icon → **Niri**. GDM goes
 - `Mod` = Super (Windows key). `Mod+Shift+'` (i.e. `Mod+?`) lists the important hotkeys.
 - `Mod+Space` launcher, `Mod+T` kitty, `Mod+S` control center, `Mod+Shift+,` Noctalia settings, `Super+Alt+L` lock, `Mod+O` overview, `Mod+Shift+E` quit.
 - The bar, launcher, notifications, lock screen and wallpaper are all Noctalia (`pkgs.latest.noctalia`), started by niri's `spawn-at-startup`.
+- Noctalia is patched (`overlays/noctalia-remove-history-on-open.patch`): clicking a notification or one of its actions, from the toast or the bell's list, also removes it from history. That patch can stop applying after `nix flake update nixpkgs-latest`.
 - Configs: `Dotfiles/niri/config.kdl`, `Dotfiles/noctalia/config.toml`. Settings changed in the Noctalia GUI are saved to `~/.local/state/noctalia/settings.toml` (not in Dotfiles) and override the TOML.
 - niri reloads `config.kdl` on save; check it with `niri validate`. Noctalia: `noctalia config validate`.
