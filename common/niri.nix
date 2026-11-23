@@ -94,12 +94,31 @@ let
 	};
 in
 {
-	# Adds "Niri" to GDM's session picker (gear icon after choosing the user).
+	# Adds the "Niri" session.
 	programs.niri.enable = true;
 
-	# GDM normally preselects the last-used session; this resets it to niri on every GDM start,
-	# so picking GNOME once never makes it the default.
-	services.displayManager.defaultSession = "niri";
+	# Login screen: Noctalia Greeter on greetd (replaces GDM), so login and Noctalia's lock screen
+	# look alike. Module: noctalia-greeter flake input (flake.nix). Package from pkgs.latest so it
+	# moves together with pkgs.latest.noctalia (Sync needs matching versions).
+	# greetd's PAM unlocks the GNOME keyring (SSH keys) because gnome-keyring is enabled.
+	services.displayManager.noctalia-greeter = {
+		enable = true;
+		package = pkgs.latest.noctalia-greeter;
+		# Noctalia copies wallpaper, colours, font and monitor scale to the greeter
+		# ([shell.greeter_sync] auto_sync in Dotfiles/noctalia/config.toml); no password prompt for juan.
+		passwordless-sync-users = [ "juan" ];
+		settings = {
+			# Always preselected, like GDM's defaultSession; GNOME is still in the session picker.
+			session.default = "niri";
+			user.default = "juan";
+			keyboard.layout = config.services.xserver.xkb.layout;
+			cursor = {
+				theme = "Adwaita";
+				size = 24;
+				path = "${pkgs.adwaita-icon-theme}/share/icons";
+			};
+		};
+	};
 
 	environment.systemPackages = with pkgs; [
 		xwayland-satellite # niri spawns it on demand for X11-only apps

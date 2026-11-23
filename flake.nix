@@ -20,6 +20,12 @@
     # Bumping it never drags the system (GNOME, Mesa, kernel) along:
     #   nix flake update nixpkgs-latest
     nixpkgs-latest.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Login screen (common/niri.nix). Only its NixOS module is used: nixpkgs 26.05 has none,
+    # and unstable's sets an option 26.05 lacks. The package comes from pkgs.latest.
+    noctalia-greeter = {
+      url = "github:noctalia-dev/noctalia-greeter";
+      inputs.nixpkgs.follows = "nixpkgs-latest";
+    };
 
     claude-code.url = "github:ryoppippi/nix-claude-code";
     # Claude Desktop: community repack of Anthropic's official Linux .deb.
@@ -31,7 +37,7 @@
     omp.url = "github:can1357/oh-my-pi";
   };
 
-  outputs = { self, home-manager, nixpkgs, claude-code, claude-desktop, omp, ... }@inputs:
+  outputs = { self, home-manager, nixpkgs, claude-code, claude-desktop, omp, noctalia-greeter, ... }@inputs:
     let
       inherit (self) outputs;
       systems = [
@@ -55,6 +61,7 @@
 				home-manager.useGlobalPkgs = true;
 				home-manager.useUserPackages = true;
 			}
+			noctalia-greeter.nixosModules.default
 			./modules/users/juan/default.nix
 			./modules/users/juan/desktop.nix
 			./modules/users/juan/kubernetes.nix

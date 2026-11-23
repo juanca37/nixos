@@ -1,6 +1,6 @@
 # nixcfg — zenbook-hexa
 
-NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`. Desktop: niri + Noctalia (default session), with GNOME still available; login via GDM (Wayland).
+NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`. Desktop: niri + Noctalia (default session), with GNOME still available; login via Noctalia Greeter on greetd (Wayland).
 
 ## Layout
 
@@ -10,7 +10,7 @@ NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`.
 | `hosts/zenbook-hexa/` | Host config: boot, kernel, GNOME, Nix GC, hardware |
 | `modules/users/juan/` | User + home-manager (CLI tools, apps, git, gpg) |
 | `modules/hardware/boot-splash.nix` | Plymouth + quiet boot |
-| `common/niri.nix` | niri session + Noctalia shell; niri is GDM's default session |
+| `common/niri.nix` | niri session, Noctalia shell, Noctalia Greeter login screen (niri preselected) |
 | `overlays/default.nix` | `pkgs.latest.*` overlay (fast-moving apps) |
 | `UPGRADE_LOG.md` | History of the 2026-11 stepwise upgrade and why the kernel needs a quirk |
 
@@ -61,7 +61,7 @@ Change both branch names in `flake.nix` together (`nixos-26.05` → `nixos-26.11
 ## Hardware quirk: kernel and display
 
 - Kernel: `linuxPackages_latest` (7.x). Needed for the internal speakers and mic (ACP 7.0 SoundWire). On 6.x only HDMI/Bluetooth audio exists.
-- `amdgpu.dcdebugmask=0x400` (disable eDP Panel Replay) is **required** on kernel 7.x: without it the screen freezes at the GDM login screen. Keep it until a newer kernel is confirmed to work without it (test that as its own reboot).
+- `amdgpu.dcdebugmask=0x400` (disable eDP Panel Replay) is **required** on kernel 7.x: without it the screen froze at the login screen (then GDM). Keep it until a newer kernel is confirmed to work without it (test that as its own reboot).
 - Fallback if a kernel update breaks the display: `boot.kernelPackages = pkgs.linuxPackages_6_18;` (no internal audio).
 
 ## Garbage collection
@@ -78,7 +78,13 @@ Never run `nix-collect-garbage -d` or `--delete-older-than` by hand: they can le
 
 ## niri (default session)
 
-GDM logs into niri by default. For GNOME, pick the user at the GDM login screen, then the gear icon → **GNOME**. GDM goes back to niri on every boot (`services.displayManager.defaultSession = "niri"`), so trying GNOME never changes the default.
+The login screen is Noctalia Greeter on greetd (`common/niri.nix`; module from the `noctalia-greeter` flake input, package `pkgs.latest.noctalia-greeter`). It always preselects juan and **Niri**; GNOME is in its session picker.
+
+- Login and lock screen match: Noctalia copies its wallpaper, colours, font and monitor scale to the greeter whenever they change (`[shell.greeter_sync] auto_sync` in `Dotfiles/noctalia/config.toml`), without a password (polkit rule from `passwordless-sync-users`). Force one with `noctalia msg greeter-sync` or Settings → Security → Noctalia Greeter → Sync Now; it shows on the next login screen.
+- greetd's PAM unlocks the GNOME keyring at login (SSH keys).
+- Greeter state: `/var/lib/noctalia-greeter/` (`greeter.toml` from Nix, `sync.toml` + wallpaper from Sync).
+- GNOME's own lock screen needs GDM, so locking inside a GNOME session doesn't work with this login screen.
+- Changing the display manager only takes effect after a reboot (`nixos-rebuild boot`, then reboot); greetd is never restarted by `switch`.
 
 - `Mod` = Super (Windows key). `Mod+Shift+'` (i.e. `Mod+?`) lists the important hotkeys.
 - `Mod+Space` launcher, `Mod+T` kitty, `Mod+S` control center, `Mod+Shift+,` Noctalia settings, `Super+Alt+L` lock, `Mod+O` overview, `Mod+Shift+E` quit.
