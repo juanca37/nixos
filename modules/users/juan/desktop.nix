@@ -37,6 +37,44 @@
 			run-shell ${pkgs.tmuxPlugins.resurrect.rtp}
 			run-shell ${pkgs.tmuxPlugins.continuum.rtp}
 		'';
+		# tmux mouse behaviour; sourced (quietly) from the Dotfiles .tmux.conf.
+		# 1. Selecting text copies it without leaving copy mode, so the view doesn't jump to the bottom.
+		# 2. Copy mode entered with the mouse (wheel or drag) switches the client to the "scroll" key
+		#    table: typing there leaves copy mode and sends the key to the app (like a plain terminal),
+		#    Esc / C-c only leave. Keys not bound in "scroll" fall back to tmux's normal tables, so
+		#    copy mode entered from the keyboard (prefix [) keeps its vi keys.
+		home.file.".tmux-mouse.conf".text = let
+			inherit (pkgs) lib;
+			printable = lib.stringToCharacters "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+			quoteKey = c: if c == "'" then "\"'\"" else "'${c}'";
+			# send-keys without arguments re-sends the key that triggered the binding.
+			typeThrough = key: "bind -T scroll ${key} { if -F '#{pane_in_mode}' { send-keys -X cancel } ; send-keys }";
+		in ''
+			bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-no-clear
+			bind -T copy-mode-vi DoubleClick1Pane { select-pane ; send-keys -X select-word ; run-shell -d 0.3 ; send-keys -X copy-pipe-no-clear }
+			bind -T copy-mode-vi TripleClick1Pane { select-pane ; send-keys -X select-line ; run-shell -d 0.3 ; send-keys -X copy-pipe-no-clear }
+
+			# Entering copy mode with the mouse (tmux defaults plus the switch to "scroll").
+			bind -n WheelUpPane if -F '#{||:#{alternate_on},#{pane_in_mode},#{mouse_any_flag}}' { send-keys -M } { copy-mode -e ; switch-client -T scroll }
+			bind -n MouseDrag1Pane if -F '#{||:#{pane_in_mode},#{mouse_any_flag}}' { send-keys -M } { copy-mode -M ; switch-client -T scroll }
+
+			# Mouse inside "scroll": copy-mode-vi behaviour, staying in "scroll" while the pane is in copy
+			# mode; on a pane that isn't, the root-table behaviour.
+			bind -T scroll WheelUpPane if -F '#{pane_in_mode}' { select-pane ; send-keys -X -N 5 scroll-up ; switch-client -T scroll } { if -F '#{||:#{alternate_on},#{mouse_any_flag}}' { send-keys -M } { copy-mode -e ; switch-client -T scroll } }
+			bind -T scroll WheelDownPane if -F '#{pane_in_mode}' { select-pane ; send-keys -X -N 5 scroll-down ; if -F '#{pane_in_mode}' { switch-client -T scroll } } { send-keys -M }
+			bind -T scroll MouseDown1Pane { select-pane -t = ; if -F '#{pane_in_mode}' { switch-client -T scroll } { send-keys -M } }
+			bind -T scroll MouseUp1Pane if -F '#{pane_in_mode}' { switch-client -T scroll } { send-keys -M }
+			bind -T scroll MouseDrag1Pane if -F '#{pane_in_mode}' { select-pane ; send-keys -X begin-selection ; switch-client -T scroll } { if -F '#{mouse_any_flag}' { send-keys -M } { copy-mode -M ; switch-client -T scroll } }
+			bind -T scroll MouseDragEnd1Pane if -F '#{pane_in_mode}' { send-keys -X copy-pipe-no-clear ; switch-client -T scroll } { send-keys -M }
+			bind -T scroll DoubleClick1Pane if -F '#{pane_in_mode}' { switch-client -T scroll ; select-pane ; send-keys -X select-word ; run-shell -d 0.3 ; send-keys -X copy-pipe-no-clear } { select-pane -t = ; if -F '#{mouse_any_flag}' { send-keys -M } { copy-mode -H ; send-keys -X select-word ; run-shell -d 0.3 ; send-keys -X copy-pipe-and-cancel } }
+			bind -T scroll TripleClick1Pane if -F '#{pane_in_mode}' { switch-client -T scroll ; select-pane ; send-keys -X select-line ; run-shell -d 0.3 ; send-keys -X copy-pipe-no-clear } { select-pane -t = ; if -F '#{mouse_any_flag}' { send-keys -M } { copy-mode -H ; send-keys -X select-line ; run-shell -d 0.3 ; send-keys -X copy-pipe-and-cancel } }
+
+			# Keyboard inside "scroll".
+			bind -T scroll Escape if -F '#{pane_in_mode}' { send-keys -X cancel }
+			bind -T scroll C-c if -F '#{pane_in_mode}' { send-keys -X cancel }
+			${lib.concatMapStringsSep "\n" (key: "bind -T scroll ${key} { send-keys ; if -F '#{pane_in_mode}' { switch-client -T scroll } }") [ "Up" "Down" "PPage" "NPage" ]}
+			${lib.concatMapStringsSep "\n" typeThrough ([ "Space" "BSpace" "Enter" "Tab" ] ++ map quoteKey printable)}
+		'';
 		home.packages = with pkgs; [
 			kitty
 			claude-desktop
