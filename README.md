@@ -1,6 +1,6 @@
 # nixcfg — zenbook-hexa
 
-NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`. Desktop: GNOME (GDM, Wayland), plus niri as an optional session.
+NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`. Desktop: niri + Noctalia (default session), with GNOME still available; login via GDM (Wayland).
 
 ## Layout
 
@@ -10,7 +10,7 @@ NixOS flake for an ASUS Zenbook S16 (UM5606GA, AMD Strix). Host: `zenbook-hexa`.
 | `hosts/zenbook-hexa/` | Host config: boot, kernel, GNOME, Nix GC, hardware |
 | `modules/users/juan/` | User + home-manager (CLI tools, apps, git, gpg) |
 | `modules/hardware/boot-splash.nix` | Plymouth + quiet boot |
-| `common/niri.nix` | niri session + Noctalia shell; GNOME stays GDM's default |
+| `common/niri.nix` | niri session + Noctalia shell; niri is GDM's default session |
 | `overlays/default.nix` | `pkgs.latest.*` overlay (fast-moving apps) |
 | `UPGRADE_LOG.md` | History of the 2026-11 stepwise upgrade and why the kernel needs a quirk |
 
@@ -76,9 +76,9 @@ Never run `nix-collect-garbage -d` or `--delete-older-than` by hand: they can le
 - Dotfiles (zsh, tmux, niri, noctalia) are symlinked out of the store from `~/Projects/Dotfiles`.
 - `home/` and `archive/` are not used by the flake.
 
-## niri (optional session)
+## niri (default session)
 
-At the GDM login screen pick the user, then the gear icon → **Niri**. GDM goes back to GNOME on every boot (`services.displayManager.defaultSession = "gnome"`), so trying niri never changes the default.
+GDM logs into niri by default. For GNOME, pick the user at the GDM login screen, then the gear icon → **GNOME**. GDM goes back to niri on every boot (`services.displayManager.defaultSession = "niri"`), so trying GNOME never changes the default.
 
 - `Mod` = Super (Windows key). `Mod+Shift+'` (i.e. `Mod+?`) lists the important hotkeys.
 - `Mod+Space` launcher, `Mod+T` kitty, `Mod+S` control center, `Mod+Shift+,` Noctalia settings, `Super+Alt+L` lock, `Mod+O` overview, `Mod+Shift+E` quit.
